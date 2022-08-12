@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "redvanworkshop.explorer-exclude-vscode-extension",
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "abhijoybasak.nestjs-files",
+    "firsttris.vscode-jest-runner",
+    "andys8.jest-snippets",
+    "editorconfig.editorconfig",
+    "jasonnutter.search-node-modules",
+    "ms-azuretools.vscode-docker",
+    "formulahendry.docker-explorer",
+    "codeandstuff.package-json-upgrade"
+  ]
+}

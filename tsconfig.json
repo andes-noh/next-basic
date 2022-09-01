@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
     "jsx": "preserve",
     "incremental": true,
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
     /* Basic Options */
-    "target": "es5",
-    "module": "CommonJS",
+    "target": "ES2018",
+    "module": "commonjs",
     /* Strict Type-Checking Options */
     "strict": true,
     /* Module Resolution Options */
@@ -26,12 +25,18 @@
     "allowJs": true,
     "noEmit": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "paths": {
+      "react": [
+        "./node_modules/@types/react"
+      ]
+    }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "map/user_map.txs"
   ],
   "exclude": [
     "node_modules"

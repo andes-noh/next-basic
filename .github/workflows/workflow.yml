@@ -1,0 +1,103 @@
+name: Next-Sample
+
+# main branch로 병합이 되면 작동합니다
+on:
+  push:
+    branches: [ main ]
+
+env:
+  # 이미지 이름을 환경변수로 등록합니다.
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/next-sample
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      # Revision를 이미지의 태그로 만들기 위해 값을 생성합니다.
+      - name: Get verion
+        id: image
+        run: |
+          VERSION=$(echo ${{ github.sha }} | cut -c1-8)
+          echo VERSION=$VERSION
+          echo "::set-output name=version::$VERSION"
+
+      # docker buildx 설치
+      - name: Docker Setup Buildx
+        uses: docker/setup-buildx-action@v1
+
+      # Container Registry에 로그인합니다.
+      - name: Login to GitHub Packages Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.TEST }}
+
+      # # secrets를 이용해 Docker Hub 로그인
+      # - name: Docker Login
+      #   uses: docker/login-action@v1.10.0
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_TOKEN }}
+
+      # # buildx 명령어로 amd64 아키텍처 이미지 빌드 및 푸쉬
+      # - name: Build Image
+      #   # uses: docker/setup-buildx-action@v1.6.0
+      #   run: |
+      #     docker buildx build --platform linux/amd64 -t ${{ env.IMAGE_NAME }}:${{ steps.image.outputs.version }} --push .
+
+      # 애플리케이션을 이미지로 build 하고 push합니다.
+      - name: Push to GitHub Packages
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ steps.image.outputs.version }}
+          cache-from: type=gha #gha =  Guthub Actions Cache
+          cache-to: type=gha,mode=max
+
+  # deploy:
+  #   runs-on: ubuntu-latest
+  #   # build job 완료 후 진행
+  #   needs: build
+
+  #   steps:
+  #     - name: Get verion
+  #       id: image
+  #       run: |
+  #         VERSION=$(echo ${{ github.sha }} | cut -c1-8)
+  #         echo VERSION=$VERSION
+  #         echo "::set-output name=version::$VERSION"
+
+  #     # kustomize 명령을 가져온다.
+  #     - name: Setup Kustomize
+  #       uses: imranismail/setup-kustomize@v1
+
+  #     - name: Checkout kustomize repository
+  #       uses: actions/checkout@v2
+  #       with:
+  #         # kubernetes 설정정보 저장소
+  #         repository: andes-noh/nest-http-server-kustomize
+  #         ref: main
+  #         # 다른 저장소에 push 하려면 Personal Access Token이 필요.
+  #         token: ${{ secrets.TEST }}
+  #         path: nest-http-server-kustomize
+  #     # 새 이미지 버전으로 파일 수정
+  #     - name: Update Kubernetes resources
+  #       run: |
+  #         cd nest-http-server-kustomize/overlays/main/
+  #         kustomize edit set image ${{ env.IMAGE_NAME }}:${{ steps.image.outputs.version }}
+  #         cat kustomization.yaml
+
+  #     # 수정된 파일 commit & push
+  #     - name: Commit files
+  #       run: |
+  #         cd nest-http-server-kustomize
+  #         git config --global user.email "nkj9693@gmail.com"
+  #         git config --global user.name "andes-noh"
+  #         git commit -am "Update image tag"
+  #         git push -u origin main

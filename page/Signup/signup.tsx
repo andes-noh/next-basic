@@ -12,10 +12,13 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography'
 import Container from '@mui/material/Container'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { useRouter } from 'next/router'
 
 const theme = createTheme()
 
 export const SignUp: React.FC = () => {
+  const router = useRouter()
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
@@ -24,7 +27,8 @@ export const SignUp: React.FC = () => {
       password: data.get('password'),
     })
 
-    // 유효성 검사
+    router.push('/')
+    // 유효성 검사 코드 작성 or react hook
   }
 
   return (
@@ -48,16 +52,24 @@ export const SignUp: React.FC = () => {
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <TextField name="firstName" required fullWidth id="firstName" label="First Name" autoFocus />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField required fullWidth id="lastName" label="Last Name" name="lastName" />
+                <TextField name="Name" required fullWidth id="Name" label="이름" autoFocus />
               </Grid>
               <Grid item xs={12}>
-                <TextField required fullWidth id="email" label="Email Address" name="email" autoComplete="email" />
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="이메일"
+                  name="email"
+                  autoComplete="email"
+                  type="email"
+                />
               </Grid>
               <Grid item xs={12}>
-                <TextField required fullWidth name="password" label="Password" type="password" id="password" />
+                <TextField required fullWidth id="password" label="비밀번호" name="password" type="password" />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField required fullWidth name="password" label="비밀번호 확인" type="password" id="password" />
               </Grid>
               <Grid item xs={12}>
                 <FormControlLabel

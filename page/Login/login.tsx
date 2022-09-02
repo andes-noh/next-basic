@@ -53,7 +53,7 @@ export const Login: React.FC = () => {
               required
               fullWidth
               id="email"
-              label="Email Address"
+              label="이메일"
               name="email"
               autoComplete="email"
               autoFocus
@@ -63,12 +63,12 @@ export const Login: React.FC = () => {
               required
               fullWidth
               name="password"
-              label="Password"
+              label="비밀번호"
               type="password"
               id="password"
               autoComplete="current-password"
             />
-            <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="Remember me" />
+            <FormControlLabel control={<Checkbox value="remember" color="primary" />} label="로그인 저장" />
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               로그인
             </Button>

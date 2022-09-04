@@ -60,44 +60,44 @@ jobs:
           cache-from: type=gha #gha =  Guthub Actions Cache
           cache-to: type=gha,mode=max
 
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   # build job 완료 후 진행
-  #   needs: build
+  deploy:
+    runs-on: ubuntu-latest
+    # build job 완료 후 진행
+    needs: build
 
-  #   steps:
-  #     - name: Get verion
-  #       id: image
-  #       run: |
-  #         VERSION=$(echo ${{ github.sha }} | cut -c1-8)
-  #         echo VERSION=$VERSION
-  #         echo "::set-output name=version::$VERSION"
+    steps:
+      - name: Get verion
+        id: image
+        run: |
+          VERSION=$(echo ${{ github.sha }} | cut -c1-8)
+          echo VERSION=$VERSION
+          echo "::set-output name=version::$VERSION"
 
-  #     # kustomize 명령을 가져온다.
-  #     - name: Setup Kustomize
-  #       uses: imranismail/setup-kustomize@v1
+      # kustomize 명령을 가져온다.
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v1
 
-  #     - name: Checkout kustomize repository
-  #       uses: actions/checkout@v2
-  #       with:
-  #         # kubernetes 설정정보 저장소
-  #         repository: andes-noh/nest-http-server-kustomize
-  #         ref: main
-  #         # 다른 저장소에 push 하려면 Personal Access Token이 필요.
-  #         token: ${{ secrets.TEST }}
-  #         path: nest-http-server-kustomize
-  #     # 새 이미지 버전으로 파일 수정
-  #     - name: Update Kubernetes resources
-  #       run: |
-  #         cd nest-http-server-kustomize/overlays/main/
-  #         kustomize edit set image ${{ env.IMAGE_NAME }}:${{ steps.image.outputs.version }}
-  #         cat kustomization.yaml
+      - name: Checkout kustomize repository
+        uses: actions/checkout@v2
+        with:
+          # kubernetes 설정정보 저장소
+          repository: andes-noh/next-kustomize
+          ref: main
+          # 다른 저장소에 push 하려면 Personal Access Token이 필요.
+          token: ${{ secrets.TEST }}
+          path: next-kustomize
+      # 새 이미지 버전으로 파일 수정
+      - name: Update Kubernetes resources
+        run: |
+          cd next-kustomize/overlays/main/
+          kustomize edit set image ${{ env.IMAGE_NAME }}:${{ steps.image.outputs.version }}
+          cat kustomization.yaml
 
-  #     # 수정된 파일 commit & push
-  #     - name: Commit files
-  #       run: |
-  #         cd nest-http-server-kustomize
-  #         git config --global user.email "nkj9693@gmail.com"
-  #         git config --global user.name "andes-noh"
-  #         git commit -am "Update image tag"
-  #         git push -u origin main
+      # 수정된 파일 commit & push
+      - name: Commit files
+        run: |
+          cd next-kustomize
+          git config --global user.email "nkj9693@gmail.com"
+          git config --global user.name "andes-noh"
+          git commit -am "Update image tag"
+          git push -u origin main
